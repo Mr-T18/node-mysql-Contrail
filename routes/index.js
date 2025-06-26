@@ -22,13 +22,15 @@ router.get('/', function(req, res, next) {
       console.log(results);
       res.render("index", {
         title: "ToDo App", 
-        todos: results
+        todos: results, 
+        isAuth: isAuth,
       });
     })
     .catch(function (err) {
       console.error(err);
       res.render("index", {
         title: "ToDo App",
+        isAuth: isAuth,
       });
     });
 });
@@ -37,7 +39,7 @@ router.get('/', function(req, res, next) {
 router.post("/", function(req,res,next) {
   const todo = req.body.add;
   knex("tasks")
-    .insert({user_id: 1, content: todo})
+    .insert({user_id: userId, content: todo})
     .then(function(){
       res.redirect("/");
     })
@@ -45,11 +47,13 @@ router.post("/", function(req,res,next) {
       console.error(err);
       res.render("index", {
         title: "ToDo App",
+        isAuth: isAuth,
       });
     });
 })
 
 router.use('/signup', require('./signup'));
 router.use('/signin', require('./signin'));
+router.use('/logout', require("./logout"));
 
 module.exports = router;

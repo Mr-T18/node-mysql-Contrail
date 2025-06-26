@@ -5,6 +5,7 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
+    <% if(isAuth) { %>
     <form action="/" method="post">
       <label>タスクの追加</label>
       <input required type="text" name="add" placeholder="何をする？"/>
@@ -15,5 +16,9 @@
         <li><span><%= todo.content %></span></li>
       <% } %>
     </ul>
+    <% } else { %>
+      <h1>Welcome to the ToDoApp</h1>
+      <a href = "/signup">Sign up NOW!</a>
+    <% } %>
   </body>
 </html>
