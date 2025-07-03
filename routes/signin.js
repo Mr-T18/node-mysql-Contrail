@@ -26,6 +26,7 @@ router.post('/', function (req, res, next) {
         });
       } else {
         req.session.userid = results[0].id;
+        req.session.name = username;
         res.redirect('/');
       }
     })
