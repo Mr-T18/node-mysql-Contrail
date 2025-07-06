@@ -20,7 +20,7 @@ router.get('/', function(req, res, next) {
   
   knex("tasks")
     .select("*")
-    .where("id", userId)
+    .where("user_id", userId)
     .then(function (results){
       console.log(results);
       res.render("index", {
@@ -46,7 +46,7 @@ router.post("/", function(req,res,next) {
   const todo = req.body.add;
 
   knex("tasks")
-    .insert({user_id: userId, content: todo})
+    .insert({"user_id": userId, "content": todo})
     .then(function(){
       res.redirect("/");
     })
