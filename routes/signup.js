@@ -4,8 +4,7 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 
 router.get('/', function (req, res, next) {
-  const userId = req.session.userid;
-  const isAuth = Boolean(userId);
+  const isAuth = req.isAuthenticated();
   res.render('signup', {
     title: 'Sign up',
     isAuth: isAuth,
@@ -16,9 +15,7 @@ router.post('/', function (req, res, next) {
   const username = req.body.username;
   const password = req.body.password;
   const repassword = req.body.repassword;
-
-  const userId = req.session.userid;
-  const isAuth = Boolean(userId);
+  const isAuth = req.isAuthenticated();
 
   knex("users")
     .where({name: username})

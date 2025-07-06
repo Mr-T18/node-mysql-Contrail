@@ -13,36 +13,43 @@ const connection = mysql.createConnection({
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  const userId = req.session.userid;
-  const userName = req.session.name;
-  const isAuth = Boolean(userId);
+  const isAuth = req.isAuthenticated();
   console.log(`isAuth: ${isAuth}`);
-  
-  knex("tasks")
-    .select("*")
-    .where("user_id", userId)
-    .then(function (results){
-      console.log(results);
-      res.render("index", {
-        title: "ToDo App", 
-        todos: results, 
-        isAuth: isAuth,
-        user_name: userName, 
+  if(isAuth){
+    const userId = req.user.id;
+    const userName = req.user.name;
+    knex("tasks")
+      .select("*")
+      .where({user_id: userId})
+      .then(function (results){
+        console.log(results);
+        res.render("index", {
+          title: "ToDo App", 
+          todos: results, 
+          isAuth: isAuth,
+          username: userName, 
+        });
+      })
+      .catch(function (err) {
+        console.error(err);
+        res.render("index", {
+          title: "ToDo App",
+          isAuth: isAuth,
+          errorMessage: [err.sqlMessage],
+        });
       });
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render("index", {
-        title: "ToDo App",
-        isAuth: isAuth,
-      });
+  }else{
+    res.render('index', {
+      title: 'ToDo App',
+      isAuth: isAuth,
     });
+  }
 });
 
 
 router.post("/", function(req,res,next) {
-  const userId = req.session.userid;
-  const isAuth = Boolean(userId);
+  const isAuth = req.isAuthenticated();
+  const userId = req.user.id;
   const todo = req.body.add;
 
   knex("tasks")
@@ -55,6 +62,7 @@ router.post("/", function(req,res,next) {
       res.render("index", {
         title: "ToDo App",
         isAuth: isAuth,
+        errorMessage: [err.sqlMessage],
       });
     });
 })
