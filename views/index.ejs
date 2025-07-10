@@ -9,26 +9,37 @@
     <%- include('./error_messages'); %>
     <%- include('./header'); %>
     <% if(isAuth) { %>
-      <div class="container"></div>
-        <h1>ようこそ、<%= username %>さん！</h1>
-        <h1>タスクを追加しよう！</h1>
-        <div class="row">
-          <div class="col-md-6">
-            <form action="/" method="post">
-              <label>タスクの追加</label>
-              <input required type="text" name="add" placeholder="何をする？"/>
-              <input type="submit" value="追加"/>
-            </form>
+      <div class="container">
+        <div class="greet">
+          <h1>ようこそ、<%= username %>さん！</h1>
+          <h1>タスクを追加しよう！</h1>
+        </div>
+        <div>
+          <form action="/" method="post">
+            <label>タスクの追加</label>
+            <input required type="text" name="add" placeholder="何をする？"/>
+            <input type="datetime-local" name="duedatetime" placeholder="期限"><br>
+            <input type="text" name="description" placeholder="説明を追加"> 
+            <input type="submit" value="追加"/>
+          </form>
           </div>
-          <div class="col-md-6">
+          <div>
             <ul>
               <% for(let todo of todos){ %>
-                <li><span><%= todo.content %></span></li>
+                <li>
+                  <span><%= todo.content %></span>
+                  <% if (todo.duedatetime_formatted) { %>
+                    <span><%= todo.duedatetime_formatted %></span>
+                  <% } %>
+                  <% if (todo.description) { %>
+                    <p><%= todo.description %></p>
+                  <% } %>
+                </li>
+                  
               <% } %>
             </ul>
           </div>
         </div>
-      </div>
     <% } else { %>
       <h1>Welcome to the ToDoApp</h1>
       <a class="btn btn-primary" href="/signup" role="button">Sign up now!</a>
