@@ -2,8 +2,10 @@
 <html>
   <head>
     <title><%= title %></title>
-    <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   </head>
   <body>
     <%- include('./error_messages'); %>
@@ -19,27 +21,63 @@
             <label>タスクの追加</label>
             <input required type="text" name="add" placeholder="何をする？"/>
             <input type="datetime-local" name="duedatetime" placeholder="期限"><br>
-            <input type="text" name="description" placeholder="説明を追加"> 
+            <input type="text" name="description" placeholder="説明を追加">
             <input type="submit" value="追加"/>
           </form>
-          </div>
-          <div>
-            <ul>
-              <% for(let todo of todos){ %>
-                <li>
-                  <span><%= todo.content %></span>
-                  <% if (todo.duedatetime_formatted) { %>
-                    <span><%= todo.duedatetime_formatted %></span>
-                  <% } %>
-                  <% if (todo.description) { %>
-                    <p><%= todo.description %></p>
-                  <% } %>
-                </li>
-                  
-              <% } %>
-            </ul>
-          </div>
         </div>
+        <div>
+          <ul>
+            <% for(let todo of todos){ %>
+              <li class="todo-item <%= todo.done === 1 ? 'completed-task' : '' %>
+                                <%= todo.isOverdue ? 'overdue-task' : '' %>
+                                <%= todo.isDueSoon ? 'due-soon-task' : '' %>">
+                <!-- ボタンの表示をdoneの値で切り替える -->
+                <% if (todo.done === 0) { %>
+                  <!-- 未完了の場合: 完了ボタン -->
+                  <form action="/tasks/complete/<%= todo.id %>" method="POST" class="todo-action-form">
+                    <button type="submit" class="todo-action-button complete-btn">
+                      完了
+                    </button>
+                  </form>
+                <% } else if (todo.done === 1) { %>
+                  <!-- 完了済みの場合: 戻すボタン -->
+                  <form action="/tasks/revert/<%= todo.id %>" method="POST" class="todo-action-form">
+                    <button type="submit" class="todo-action-button revert-btn">
+                      戻す
+                    </button>
+                  </form>
+                <% } %>
+
+                <!-- タスクの内容 (中央) -->
+                <div class="todo-content">
+                    <span><%= todo.content %></span>
+                    <% if (todo.duedatetime_formatted) { %>
+                        <p class="duedate <%= todo.isOverdue ? 'overdue-text' : '' %>
+                                        <%= todo.isDueSoon ? 'due-soon-text' : '' %>">
+                            <% if (todo.isOverdue) { %>
+                                <i class="fas fa-exclamation-triangle warning-icon"></i> <!-- 期限切れアイコン -->
+                            <% } else if (todo.isDueSoon) { %>
+                                <i class="fas fa-clock warning-icon"></i> <!-- 期限間近アイコン -->
+                            <% } %>
+                            期限: <%= todo.duedatetime_formatted %>
+                        </p>
+                    <% } %>
+                    <% if (todo.description) { %>
+                        <p><%= todo.description %></p>
+                    <% } %>
+                </div>
+
+                <!-- 右側の「削除」ボタン -->
+                <form action="/tasks/delete/<%= todo.id %>" method="POST" class="todo-action-form">
+                    <button type="submit" class="todo-action-button delete-btn">
+                        削除
+                    </button>
+                </form>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
     <% } else { %>
       <h1>Welcome to the ToDoApp</h1>
       <a class="btn btn-primary" href="/signup" role="button">Sign up now!</a>
