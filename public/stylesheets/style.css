@@ -139,11 +139,11 @@ ul li.completed-task {
     opacity: 0.8; /* 全体的に少し薄くする */
 }
 
-/* 完了したタスク内容（名前、説明、期限）の文字色を薄くする */
+/* 完了したタスクの内容（名前、説明、期限）に打ち消し線と文字色を薄くする */
 ul li.completed-task .todo-content span,
 ul li.completed-task .todo-content p {
+    text-decoration: line-through; /* 打ち消し線 */
     color: #888; /* 完了したタスクの文字色を薄くする */
-    text-decoration: none; /* 打ち消し線を削除 */
 }
 
 /* 完了したタスク内のボタンは薄くしない */
