@@ -1,8 +1,340 @@
+/* General Body Styles */
 body {
-  padding-left: 20px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-family: 'Segoe UI', 'Roboto', sans-serif;
+    background: linear-gradient(to right, #ece9e6, #ffffff);
+    color: #333;
+    line-height: 1.6;
 }
 
-a {
-  color: #00B7FF;
+/* Navbar Enhancements */
+.navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 0.75rem 1rem;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: #2c3e50 !important;
+    font-size: 1.75rem;
+    transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: #3498db !important;
+}
+
+.nav-link {
+    color: #555 !important;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #3498db !important;
+    transform: translateY(-2px);
+}
+
+/* Container & Form Styling */
+.container {
+    margin-top: 30px;
+    background-color: #fff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.greet h1 {
+    color: #2c3e50;
+    font-size: 2.2rem;
+    margin-bottom: 25px;
+    text-align: center;
+    font-weight: 600;
+}
+
+form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+    align-items: flex-end;
+}
+
+form label {
+    font-weight: 600;
+    color: #555;
+    flex-basis: 100%;
+}
+
+form input[type="text"],
+form input[type="datetime-local"],
+form input[type="password"] {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+form input[type="text"]:focus,
+form input[type="datetime-local"]:focus,
+form input[type="password"]:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+form input[type="submit"],
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+form input[type="submit"]:hover,
+.btn-primary:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ToDo List Styling */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li.todo-item {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-left: 5px solid #3498db; /* アクセントカラー */
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
+}
+
+ul li.todo-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 完了したタスクのスタイル */
+ul li.completed-task {
+    background-color: #f0f0f0; /* 少し暗めの背景 */
+    border-left-color: #7f8c8d; /* 完了済みを示すグレーのボーダー */
+    opacity: 0.8; /* 全体的に少し薄くする */
+}
+
+/* 完了したタスク内容（名前、説明、期限）の文字色を薄くする */
+ul li.completed-task .todo-content span,
+ul li.completed-task .todo-content p {
+    color: #888; /* 完了したタスクの文字色を薄くする */
+    text-decoration: none; /* 打ち消し線を削除 */
+}
+
+/* 完了したタスク内のボタンは薄くしない */
+ul li.completed-task .todo-action-button {
+    opacity: 1; /* ボタンの透明度をリセット */
+}
+
+
+ul li .todo-content {
+    flex-grow: 1;
+    margin: 0 1rem;
+}
+
+ul li .todo-content span {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.15rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+ul li .todo-content p {
+    font-size: 0.95rem;
+    color: #555;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+ul li .todo-content p.duedate {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    display: flex; /* アイコンとテキストを横並びにするため */
+    align-items: center; /* 垂直方向の中央揃え */
+}
+
+/* 警告アイコンのスタイル */
+.warning-icon {
+    margin-right: 5px;
+    font-size: 1em;
+}
+
+/* 期限間近のタスクのスタイル */
+ul li.due-soon-task {
+    border-left-color: #f39c12; /* オレンジ色のボーダー */
+    background-color: #fffbe6; /* 薄い黄色の背景 */
+}
+
+.due-soon-text {
+    color: #f39c12 !important; /* オレンジ色の文字 */
+    font-weight: 600;
+}
+
+.due-soon-task .warning-icon {
+    color: #f39c12; /* オレンジ色のアイコン */
+}
+
+/* 期限切れのタスクのスタイル */
+ul li.overdue-task {
+    border-left-color: #e74c3c; /* 赤色のボーダー */
+    background-color: #ffe6e6; /* 薄い赤色の背景 */
+}
+
+.overdue-text {
+    color: #e74c3c !important; /* 赤色の文字 */
+    font-weight: 600;
+}
+
+.overdue-task .warning-icon {
+    color: #e74c3c; /* 赤色のアイコン */
+}
+
+
+/* Complete, Revert and Delete Buttons */
+.todo-action-button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.todo-action-button.complete-btn {
+    background-color: #2ecc71; /* 緑色 */
+    color: white;
+}
+
+.todo-action-button.complete-btn:hover {
+    background-color: #27ae60;
+    transform: translateY(-1px);
+}
+
+.todo-action-button.revert-btn {
+    background-color: #f39c12; /* オレンジ色 */
+    color: white;
+}
+
+.todo-action-button.revert-btn:hover {
+    background-color: #e67e22;
+    transform: translateY(-1px);
+}
+
+.todo-action-button.delete-btn {
+    background-color: #e74c3c; /* 赤色 */
+    color: white;
+    margin-left: 10px;
+}
+
+.todo-action-button.delete-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-1px);
+}
+
+
+/* Welcome Message for Guests */
+h1.welcome-guest {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.btn-signup-now {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+    background-color: #2ecc71;
+    border-color: #2ecc71;
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-signup-now:hover {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+/* Error Messages */
+.alert.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    form input[type="submit"] {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .greet h1 {
+        font-size: 1.8rem;
+    }
+
+    ul li.todo-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    ul li .todo-action-form {
+        width: 100%;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    ul li .todo-content {
+        width: 100%;
+        margin: 0 0 10px 0;
+    }
+
+    .todo-action-button.delete-btn {
+        margin-left: 0;
+        margin-top: 10px;
+    }
 }
