@@ -1,26 +1,35 @@
-<!-- signin.html -->
 <!DOCTYPE html>
 <html>
     <head>
         <title><%= title %></title>
-        <link rel='stylesheet' href='/stylesheets/style.css' />
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
                 integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+        <link rel='stylesheet' href='/stylesheets/style.css' /> <!-- カスタムCSSを読み込む -->
     </head>
     <body>
         <%- include('./header'); %>
         <%- include('./error_messages'); %>
-        <div class="container">
-            <form action="/signin" method="post">
-                <label>ユーザ名</label>
-                <input required type="text" name="username"/>
-                <br>
-                <label>パスワード</label>
-                <input required type="password" name="password"/>
-                <br>
-                <input class="btn btn-primary" type="submit" value="Sign in"/>
-            </form>
+        
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <h2 class="auth-title">サインイン</h2>
+                <form action="/signin" method="post" class="auth-form">
+                    <div class="form-group">
+                        <label for="username">ユーザ名</label>
+                        <input required type="text" name="username" id="username" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">パスワード</label>
+                        <input required type="password" name="password" id="password" class="form-control"/>
+                    </div>
+                    <input class="btn btn-primary btn-block auth-submit-btn" type="submit" value="サインイン"/>
+                </form>
+                <div class="auth-links">
+                    <p>アカウントをお持ちでないですか？ <a href="/signup">サインアップはこちら</a></p>
+                </div>
+            </div>
         </div>
+
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
                 integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
                 crossorigin="anonymous"></script>
