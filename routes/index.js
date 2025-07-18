@@ -3,12 +3,12 @@ const router = express.Router();
 const knex = require("../db/knex");
 const mysql = require("mysql");
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "todo_app"
-});
+// const connection = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "password",
+//   database: "todo_app"
+// });
 
 // 日付フォーマット関数
 // 期限切れの場合は「期限切れ」と表示するように修正
@@ -218,6 +218,124 @@ router.post('/tasks/delete/:id', async function(req, res, next) {
     console.error(err);
     // エラーが発生したらルートパスにリダイレクト
     res.redirect('/');
+  }
+});
+
+/* GET: タスク編集フォームの表示 */
+router.get('/tasks/edit/:id', async function(req, res, next) {
+  const isAuth = req.isAuthenticated();
+  if (!isAuth) {
+    return res.redirect('/signin');
+  }
+
+  const taskId = req.params.id;
+  const userId = req.user.id;
+
+  try {
+    const task = await knex('tasks')
+      .select('*')
+      .where({ id: taskId, user_id: userId })
+      .first(); // 単一のタスクを取得
+
+    if (!task) {
+      console.error(`タスクID ${taskId} が見つからないか、アクセス権がありません。`);
+      return res.redirect('/'); // タスクが見つからない場合は一覧ページへ
+    }
+
+    // datetime-local入力フィールド用に日付をフォーマット
+    let duedatetimeInputFormat = '';
+    if (task.duedatetime) {
+      const dueDate = new Date(task.duedatetime);
+      duedatetimeInputFormat = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}-${String(dueDate.getDate()).padStart(2, '0')}T${String(dueDate.getHours()).padStart(2, '0')}:${String(dueDate.getMinutes()).padStart(2, '0')}`;
+    }
+
+    res.render('edit', { // 新しいedit.htmlテンプレートをレンダリング
+      title: 'タスク編集',
+      isAuth: isAuth,
+      task: {
+        ...task, // 既存のタスクデータを展開
+        duedatetime_input_format: duedatetimeInputFormat // 入力フィールド用のフォーマットを追加
+      },
+      errorMessage: []
+    });
+
+  } catch (err) {
+    console.error('タスク編集フォームの表示中にエラーが発生しました:', err);
+    res.redirect('/'); // エラー時は一覧ページへ
+  }
+});
+
+/* POST: タスクの更新処理 */
+router.post('/tasks/edit/:id', async function(req, res, next) {
+  const isAuth = req.isAuthenticated();
+  if (!isAuth) {
+    return res.redirect('/signin');
+  }
+
+  const taskId = req.params.id;
+  const userId = req.user.id;
+  const content = req.body.content; // フォームからのタスク内容
+  const duedatetime = req.body.duedatetime || null; // フォームからの期限
+  const description = req.body.description || null; // フォームからの説明
+
+  if (!content) {
+    console.error('タスク内容が空です。');
+    // エラーメッセージと共に編集ページを再レンダリングする
+    const task = await knex('tasks').select('*').where({ id: taskId, user_id: userId }).first();
+    let duedatetimeInputFormat = '';
+    if (task && task.duedatetime) {
+        const dueDate = new Date(task.duedatetime);
+        duedatetimeInputFormat = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}-${String(dueDate.getDate()).padStart(2, '0')}T${String(dueDate.getHours()).padStart(2, '0')}:${String(dueDate.getMinutes()).padStart(2, '0')}`;
+    }
+    return res.render('edit', {
+        title: 'タスク編集',
+        isAuth: isAuth,
+        task: {
+            id: taskId,
+            content: content, // ユーザーが入力した内容を保持
+            description: description, // ユーザーが入力した内容を保持
+            duedatetime_input_format: duedatetimeInputFormat // 既存の期限を保持
+        },
+        errorMessage: ['タスク内容を入力してください。']
+    });
+  }
+
+  try {
+    const count = await knex('tasks')
+      .where({ id: taskId, user_id: userId })
+      .update({
+        content: content,
+        duedatetime: duedatetime,
+        description: description
+      });
+
+    if (count > 0) {
+      console.log(`タスクID ${taskId} を更新しました。`);
+    } else {
+      console.error(`タスクID ${taskId} が見つからないか、更新できませんでした。`);
+    }
+    res.redirect('/'); // 更新後、一覧ページへリダイレクト
+
+  } catch (err) {
+    console.error('タスクの更新中にエラーが発生しました:', err);
+    // エラーメッセージと共に編集ページを再レンダリングする
+    const task = await knex('tasks').select('*').where({ id: taskId, user_id: userId }).first();
+    let duedatetimeInputFormat = '';
+    if (task && task.duedatetime) {
+        const dueDate = new Date(task.duedatetime);
+        duedatetimeInputFormat = `${dueDate.getFullYear()}-${String(dueDate.getMonth() + 1).padStart(2, '0')}-${String(dueDate.getDate()).padStart(2, '0')}T${String(dueDate.getHours()).padStart(2, '0')}:${String(dueDate.getMinutes()).padStart(2, '0')}`;
+    }
+    res.render('edit', {
+        title: 'タスク編集',
+        isAuth: isAuth,
+        task: {
+            id: taskId,
+            content: content, // ユーザーが入力した内容を保持
+            description: description, // ユーザーが入力した内容を保持
+            duedatetime_input_format: duedatetimeInputFormat // 既存の期限を保持
+        },
+        errorMessage: [err.sqlMessage || 'タスクの更新中にエラーが発生しました。']
+    });
   }
 });
 

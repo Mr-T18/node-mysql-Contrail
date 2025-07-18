@@ -76,12 +76,15 @@
                       <% } %>
                   </div>
 
-                  <!-- 右側の「削除」ボタン -->
-                  <form action="/tasks/delete/<%= todo.id %>" method="POST" class="todo-action-form">
-                      <button type="submit" class="todo-action-button delete-btn">
-                          削除
-                      </button>
-                  </form>
+                  <!-- 右側の「編集」ボタンと「削除」ボタン -->
+                  <div class="task-actions">
+                    <a href="/tasks/edit/<%= todo.id %>" class="todo-action-button edit-btn">編集</a>
+                    <form action="/tasks/delete/<%= todo.id %>" method="POST" class="todo-action-form">
+                        <button type="submit" class="todo-action-button delete-btn">
+                            削除
+                        </button>
+                    </form>
+                  </div>
                 </li>
               <% } %>
             </ul>
@@ -116,9 +119,8 @@
     <% } else { %>
       <!-- ログインしていない場合のウェルカムメッセージはシンプルに -->
       <div class="container text-center mt-5">
-        <h1>ToDoアプリへようこそ！</h1>
-        <p class="lead">タスクを管理して、日々の生産性を向上させましょう。</p>
-        <p>今すぐサインアップして、始めましょう！</p>
+        <h1>FIRST of ALL</h1>
+        <p class="lead">今日を、最高のスタートに。</p>
       </div>
     <% } %>
 
