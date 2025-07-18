@@ -12,7 +12,7 @@ const mysql = require("mysql");
 
 // 日付フォーマット関数
 // 期限切れの場合は「期限切れ」と表示するように修正
-function formatDateTime(dateTime, isOverdue = false) {
+function formatDateTime(dateTime, isOverdue = false ) {
   if (!dateTime) return '';
   const date = new Date(dateTime);
 
