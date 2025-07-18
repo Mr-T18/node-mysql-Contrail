@@ -512,6 +512,17 @@ ul li.overdue-task {
     font-weight: 700;
 }
 
+/* エラーメッセージのスタイルを調整 */
+.auth-card .alert.alert-danger {
+    margin-top: -15px; /* タイトルとのスペースを調整 */
+    margin-bottom: 25px; /* フォームとのスペース */
+    padding: 12px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.1); /* エラーカラーに基づいた影 */
+}
+
+
 .auth-form .form-group {
     margin-bottom: 20px; /* フォームグループ間のスペース */
     text-align: left; /* ラベルと入力フィールドを左寄せ */
@@ -638,6 +649,10 @@ ul li.overdue-task {
     .auth-title {
         font-size: 1.8rem;
         margin-bottom: 20px;
+    }
+    .auth-card .alert.alert-danger {
+        margin-top: -10px; /* タイトルとのスペースを調整 */
+        margin-bottom: 20px; /* フォームとのスペース */
     }
 }
 
