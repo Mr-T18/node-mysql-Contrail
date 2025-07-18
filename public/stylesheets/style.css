@@ -321,8 +321,8 @@ ul li.todo-item {
     margin-bottom: 12px;
     border-radius: 8px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: center; /* 垂直方向の中央揃え */
+    justify-content: flex-start; /* 左端に揃える */
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
 }
@@ -356,10 +356,45 @@ ul li.completed-task .todo-action-button {
     opacity: 1; /* ボタンの透明度をリセット */
 }
 
+/* 「完了」「戻す」ボタンのフォームラッパー */
+form.todo-action-form {
+    margin: 0; /* フォームのデフォルトマージンをリセット */
+    padding: 0; /* フォームのデフォルトパディングをリセット */
+    flex-shrink: 0; /* 縮小させない */
+    /* width: 70px; */ /* ボタンの幅に合わせる */
+    /* text-align: center; */
+}
+
+/* 「完了」「戻す」ボタン自体 */
+.todo-action-button.complete-btn,
+.todo-action-button.revert-btn {
+    background-color: #2ecc71; /* 緑色 */
+    color: white;
+    width: 70px; /* 固定幅を設定 */
+    text-align: center;
+    box-sizing: border-box; /* パディングとボーダーをwidthに含める */
+    margin-right: 15px; /* タスク内容との間隔 */
+}
+
+.todo-action-button.complete-btn:hover {
+    background-color: #27ae60;
+    transform: translateY(-1px);
+}
+
+.todo-action-button.revert-btn {
+    background-color: #f39c12; /* オレンジ色 */
+    color: white;
+}
+
+.todo-action-button.revert-btn:hover {
+    background-color: #e67e22;
+    transform: translateY(-1px);
+}
+
 
 ul li .todo-content {
-    flex-grow: 1;
-    margin: 0 1rem;
+    flex-grow: 1; /* 残りのスペースを埋める */
+    margin: 0 1rem; /* 左右にマージン */
 }
 
 ul li .todo-content span {
@@ -421,7 +456,8 @@ ul li.overdue-task {
 }
 
 
-/* Complete, Revert and Delete Buttons */
+/* Complete, Revert, Edit, and Delete Buttons */
+/* すべてのtodo-action-buttonに共通のスタイルを適用 */
 .todo-action-button {
     border: none;
     padding: 8px 12px;
@@ -431,37 +467,58 @@ ul li.overdue-task {
     font-weight: 500;
     transition: background-color 0.3s ease, transform 0.2s ease;
     flex-shrink: 0;
-}
-
-.todo-action-button.complete-btn {
-    background-color: #2ecc71; /* 緑色 */
-    color: white;
-}
-
-.todo-action-button.complete-btn:hover {
-    background-color: #27ae60;
-    transform: translateY(-1px);
-}
-
-.todo-action-button.revert-btn {
-    background-color: #f39c12; /* オレンジ色 */
-    color: white;
-}
-
-.todo-action-button.revert-btn:hover {
-    background-color: #e67e22;
-    transform: translateY(-1px);
+    width: 70px; /* 固定幅を設定 */
+    text-align: center;
+    box-sizing: border-box; /* パディングとボーダーをwidthに含める */
+    
+    /* NEW: Flexboxを使ってボタン内のコンテンツを中央揃え */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: normal; /* Flexboxで中央揃えするため、行の高さをリセット */
 }
 
 .todo-action-button.delete-btn {
     background-color: #e74c3c; /* 赤色 */
     color: white;
-    margin-left: 10px;
 }
 
 .todo-action-button.delete-btn:hover {
     background-color: #c0392b;
     transform: translateY(-1px);
+}
+
+/* Edit Button */
+.todo-action-button.edit-btn {
+    background-color: #3498db; /* 青色 */
+    color: white;
+    text-decoration: none; /* aタグのデフォルト下線をなくす */
+    /* display: inline-block; は不要、.todo-action-button で display: flex になっているため */
+    /* line-height: 1; も不要、.todo-action-button で line-height: normal になっているため */
+}
+
+.todo-action-button.edit-btn:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+/* Task Actions Container (編集・削除ボタンの親要素) */
+.task-actions {
+    display: flex; /* Flexboxを適用 */
+    flex-direction: column; /* ボタンを縦に並べる */
+    align-items: flex-end; /* 子要素をこのコンテナの右端に揃える */
+    gap: 5px; /* ボタン間の垂直方向のスペース */
+    flex-shrink: 0; /* 縮小させない */
+    margin-left: auto; /* NEW: 残りのスペースを左に押しやり、自身を右に寄せる */
+}
+
+/* 削除ボタンのフォームラッパー */
+.task-actions .todo-action-form { /* .task-actions の中の .todo-action-form に適用 */
+    margin: 0; /* フォームのデフォルトマージンをリセット */
+    padding: 0; /* フォームのデフォルトパディングをリセット */
+    display: flex; /* フォーム自体をFlexコンテナにする */
+    justify-content: flex-end; /* フォーム内のボタンを右端に揃える */
+    width: 100%; /* 親要素 (task-actions) の幅いっぱいに広げる */
 }
 
 
@@ -519,6 +576,9 @@ ul li.overdue-task {
     padding: 12px;
     font-size: 0.9rem;
     border-radius: 8px;
+    background-color: #f8d7da; /* Bootstrapのデフォルト背景色 */
+    color: #dc3545; /* 明るい赤色に変更 */
+    border-color: #f5c6cb; /* ボーダー色も調整 */
     box-shadow: 0 2px 8px rgba(231, 76, 60, 0.1); /* エラーカラーに基づいた影 */
 }
 
@@ -569,6 +629,31 @@ ul li.overdue-task {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
+
+/* Edit Page Cancel Button */
+.auth-cancel-btn {
+    background-color: #6c757d; /* セカンダリカラー（グレー） */
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 15px; /* 更新ボタンとの間にスペース */
+    text-decoration: none; /* aタグのデフォルト下線をなくす */
+    display: inline-block; /* paddingとwidthを適用するために必要 */
+    width: 100%; /* 親要素に合わせる */
+}
+
+.auth-cancel-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
 
 .auth-links {
     margin-top: 25px;
@@ -654,6 +739,11 @@ ul li.overdue-task {
         margin-top: -10px; /* タイトルとのスペースを調整 */
         margin-bottom: 20px; /* フォームとのスペース */
     }
+    /* 編集ページのボタンのレスポンシブ調整 */
+    .auth-submit-btn, .auth-cancel-btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
 }
 
 @media (max-width: 576px) { /* さらに小さい画面での調整 */
@@ -673,9 +763,5 @@ ul li.overdue-task {
     .auth-card {
         border-radius: 10px; /* さらに小さく */
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 影も調整 */
-    }
-    .auth-submit-btn {
-        padding: 12px 20px;
-        font-size: 1rem;
     }
 }
