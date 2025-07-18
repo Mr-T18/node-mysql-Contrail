@@ -8,11 +8,11 @@
     </head>
     <body>
         <%- include('./header'); %>
-        <%- include('./error_messages'); %>
         
         <div class="auth-wrapper">
             <div class="auth-card">
                 <h2 class="auth-title">サインアップ</h2>
+                <%- include('./error_messages'); %> <!-- ここに移動 -->
                 <form action="/signup" method="post" class="auth-form">
                     <div class="form-group">
                         <label for="username">ユーザ名</label>
