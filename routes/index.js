@@ -227,10 +227,3 @@ router.use('/signin', require('./signin'));
 router.use('/logout', require("./logout"));
 
 module.exports = router;
-
-/*
-追加したい機能
-・日付設定機能
-・タスクの説明
-・タグの設定
-*/

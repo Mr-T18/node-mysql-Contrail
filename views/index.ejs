@@ -10,80 +10,367 @@
   <body>
     <%- include('./error_messages'); %>
     <%- include('./header'); %>
+
     <% if(isAuth) { %>
-      <div class="container">
-        <div class="greet">
-          <h1>ようこそ、<%= username %>さん！</h1>
-          <h1>タスクを追加しよう！</h1>
-        </div>
-        <div>
-          <form action="/" method="post">
-            <label>タスクの追加</label>
-            <input required type="text" name="add" placeholder="何をする？"/>
-            <input type="datetime-local" name="duedatetime" placeholder="期限"><br>
-            <input type="text" name="description" placeholder="説明を追加">
-            <input type="submit" value="追加"/>
-          </form>
-        </div>
-        <div>
-          <ul>
-            <% for(let todo of todos){ %>
-              <li class="todo-item <%= todo.done === 1 ? 'completed-task' : '' %>
-                                <%= todo.isOverdue ? 'overdue-task' : '' %>
-                                <%= todo.isDueSoon ? 'due-soon-task' : '' %>">
-                <!-- ボタンの表示をdoneの値で切り替える -->
-                <% if (todo.done === 0) { %>
-                  <!-- 未完了の場合: 完了ボタン -->
-                  <form action="/tasks/complete/<%= todo.id %>" method="POST" class="todo-action-form">
-                    <button type="submit" class="todo-action-button complete-btn">
-                      完了
-                    </button>
-                  </form>
-                <% } else if (todo.done === 1) { %>
-                  <!-- 完了済みの場合: 戻すボタン -->
-                  <form action="/tasks/revert/<%= todo.id %>" method="POST" class="todo-action-form">
-                    <button type="submit" class="todo-action-button revert-btn">
-                      戻す
-                    </button>
-                  </form>
-                <% } %>
+      <div class="main-container">
+        <!-- 左側のパネル: タスク一覧と追加フォーム -->
+        <div class="left-panel">
+          <div class="greet">
+            <h1>ようこそ、<%= username %>さん！</h1>
+            <h1>タスクを追加しよう！</h1>
+          </div>
+          <div class="task-add-section">
+            <form action="/" method="post">
+              <label>タスクの追加</label>
+              <input required type="text" name="add" placeholder="何をする？"/>
+              <input type="datetime-local" name="duedatetime" placeholder="期限"><br>
+              <input type="text" name="description" placeholder="説明を追加">
+              <input type="submit" value="追加"/>
+            </form>
+          </div>
+          <div class="task-list-section">
+            <ul id="all-tasks-list">
+              <% for(let todo of todos){ %>
+                <li class="todo-item <%= todo.done === 1 ? 'completed-task' : '' %>
+                                  <%= todo.isOverdue ? 'overdue-task' : '' %>
+                                  <%= todo.isDueSoon ? 'due-soon-task' : '' %>"
+                    data-task-id="<%= todo.id %>"
+                    data-task-content="<%= todo.content %>"
+                    data-task-is-due-soon="<%= todo.isDueSoon %>"
+                    data-task-is-overdue="<%= todo.isOverdue %>"
+                    data-due-date="<%= todo.duedatetime ? new Date(todo.duedatetime).toISOString().split('T')[0] : '' %>"
+                    data-is-completed="<%= todo.done === 1 %>">
+                  <!-- ボタンの表示をdoneの値で切り替える -->
+                  <% if (todo.done === 0) { %>
+                    <!-- 未完了の場合: 完了ボタン -->
+                    <form action="/tasks/complete/<%= todo.id %>" method="POST" class="todo-action-form">
+                      <button type="submit" class="todo-action-button complete-btn">
+                        完了
+                      </button>
+                    </form>
+                  <% } else if (todo.done === 1) { %>
+                    <!-- 完了済みの場合: 戻すボタン -->
+                    <form action="/tasks/revert/<%= todo.id %>" method="POST" class="todo-action-form">
+                      <button type="submit" class="todo-action-button revert-btn">
+                        戻す
+                      </button>
+                    </form>
+                  <% } %>
 
-                <!-- タスクの内容 (中央) -->
-                <div class="todo-content">
-                    <span><%= todo.content %></span>
-                    <% if (todo.duedatetime_formatted) { %>
-                        <p class="duedate <%= todo.isOverdue ? 'overdue-text' : '' %>
-                                        <%= todo.isDueSoon ? 'due-soon-text' : '' %>">
-                            <% if (todo.isOverdue) { %>
-                                <i class="fas fa-exclamation-triangle warning-icon"></i> <!-- 期限切れアイコン -->
-                            <% } else if (todo.isDueSoon) { %>
-                                <i class="fas fa-clock warning-icon"></i> <!-- 期限間近アイコン -->
-                            <% } %>
-                            期限: <%= todo.duedatetime_formatted %>
-                        </p>
-                    <% } %>
-                    <% if (todo.description) { %>
-                        <p><%= todo.description %></p>
-                    <% } %>
-                </div>
+                  <!-- タスクの内容 (中央) -->
+                  <div class="todo-content">
+                      <span><%= todo.content %></span>
+                      <% if (todo.duedatetime_formatted) { %>
+                          <p class="duedate <%= todo.isOverdue ? 'overdue-text' : '' %>
+                                          <%= todo.isDueSoon ? 'due-soon-text' : '' %>">
+                              <% if (todo.isOverdue) { %>
+                                  <i class="fas fa-exclamation-triangle warning-icon"></i> <!-- 期限切れアイコン -->
+                              <% } else if (todo.isDueSoon) { %>
+                                  <i class="fas fa-clock warning-icon"></i> <!-- 期限間近アイコン -->
+                              <% } %>
+                              期限: <%= todo.duedatetime_formatted %>
+                          </p>
+                      <% } %>
+                      <% if (todo.description) { %>
+                          <p><%= todo.description %></p>
+                      <% } %>
+                  </div>
 
-                <!-- 右側の「削除」ボタン -->
-                <form action="/tasks/delete/<%= todo.id %>" method="POST" class="todo-action-form">
-                    <button type="submit" class="todo-action-button delete-btn">
-                        削除
-                    </button>
-                </form>
-              </li>
-            <% } %>
-          </ul>
+                  <!-- 右側の「削除」ボタン -->
+                  <form action="/tasks/delete/<%= todo.id %>" method="POST" class="todo-action-form">
+                      <button type="submit" class="todo-action-button delete-btn">
+                          削除
+                      </button>
+                  </form>
+                </li>
+              <% } %>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 右側のパネル: カレンダーと選択された日付のタスク -->
+        <div class="right-panel">
+          <div class="calendar-container">
+            <div class="calendar-header">
+              <button id="prevMonth" class="calendar-nav-btn"><i class="fas fa-chevron-left"></i></button>
+              <h2 id="currentMonthYear"></h2>
+              <button id="nextMonth" class="calendar-nav-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="calendar-weekdays">
+              <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+            </div>
+            <div id="calendarGrid" class="calendar-grid">
+              <!-- カレンダーの日付はJavaScriptで生成されます -->
+            </div>
+          </div>
+
+          <div class="selected-date-tasks-container">
+            <h3 id="selectedDateHeader"></h3>
+            <ul id="selectedDateTasksList">
+              <!-- 選択された日付のタスクはJavaScriptで表示されます -->
+            </ul>
+            <p id="noTasksMessage" class="no-tasks-message" style="display: none;">この日にはタスクがありません。</p>
+          </div>
         </div>
       </div>
     <% } else { %>
-      <h1>Welcome to the ToDoApp</h1>
-      <a class="btn btn-primary" href="/signup" role="button">Sign up now!</a>
+      <!-- ログインしていない場合のウェルカムメッセージはシンプルに -->
+      <div class="container text-center mt-5">
+        <h1>ToDoアプリへようこそ！</h1>
+        <p class="lead">タスクを管理して、日々の生産性を向上させましょう。</p>
+        <p>今すぐサインアップして、始めましょう！</p>
+      </div>
     <% } %>
+
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // --- 通知機能のJavaScript (既存のコード) ---
+        const NOTIFICATION_HISTORY_KEY = 'todo_notification_history';
+
+        function getNotificationHistory() {
+          try {
+            const history = localStorage.getItem(NOTIFICATION_HISTORY_KEY);
+            return history ? JSON.parse(history) : {};
+          } catch (e) {
+            console.error('Failed to parse notification history from localStorage:', e);
+            return {};
+          }
+        }
+
+        function saveNotificationHistory(history) {
+          try {
+            localStorage.setItem(NOTIFICATION_HISTORY_KEY, JSON.stringify(history));
+          } catch (e) {
+            console.error('Failed to save notification history to localStorage:', e);
+          }
+        }
+
+        function sendNotification(taskId, title, body) {
+          if (!("Notification" in window)) {
+            console.warn("このブラウザはデスクトップ通知をサポートしていません。");
+            return;
+          }
+
+          if (Notification.permission === "default") {
+            Notification.requestPermission().then(permission => {
+              if (permission === "granted") {
+                new Notification(title, { body: body, icon: '/images/todo-icon.png' });
+                markTaskAsNotified(taskId);
+              } else {
+                console.warn("デスクトップ通知が拒否されました。");
+              }
+            });
+          } else if (Notification.permission === "granted") {
+            new Notification(title, { body: body, icon: '/images/todo-icon.png' });
+            markTaskAsNotified(taskId);
+          } else {
+            console.warn("デスクトップ通知がブロックされています。ブラウザの設定を確認してください。");
+          }
+        }
+
+        function markTaskAsNotified(taskId) {
+          const history = getNotificationHistory();
+          history[taskId] = true;
+          saveNotificationHistory(history);
+        }
+
+        function hasTaskBeenNotified(taskId) {
+          const history = getNotificationHistory();
+          return history[taskId] === true;
+        }
+
+        function checkAndNotifyTasks() {
+          const taskItems = document.querySelectorAll('li.todo-item');
+          taskItems.forEach(item => {
+            const taskId = item.dataset.taskId;
+            const taskContent = item.dataset.taskContent;
+            const isDueSoon = item.dataset.taskIsDueSoon === 'true';
+            const isOverdue = item.dataset.taskIsOverdue === 'true';
+            const isCompleted = item.dataset.isCompleted === 'true'; // datasetから取得
+
+            if (isCompleted || hasTaskBeenNotified(taskId)) {
+              return;
+            }
+
+            let notificationTitle = '';
+            let notificationBody = '';
+
+            if (isOverdue) {
+              notificationTitle = '🚨 期限切れタスク！';
+              notificationBody = `「${taskContent}」の期限が過ぎています！`;
+              sendNotification(taskId, notificationTitle, notificationBody);
+            } else if (isDueSoon) {
+              notificationTitle = '⏰ 期限間近のタスク';
+              notificationBody = `「${taskContent}」の期限が24時間以内です。`;
+              sendNotification(taskId, notificationTitle, notificationBody);
+            }
+          });
+        }
+        // --- 通知機能のJavaScript 終わり ---
+
+
+        // --- カレンダー機能のJavaScript ---
+        const calendarGrid = document.getElementById('calendarGrid');
+        const currentMonthYear = document.getElementById('currentMonthYear');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const selectedDateHeader = document.getElementById('selectedDateHeader');
+        const selectedDateTasksList = document.getElementById('selectedDateTasksList');
+        const noTasksMessage = document.getElementById('noTasksMessage');
+        const allTasksList = document.getElementById('all-tasks-list'); // 全タスクのUL要素
+
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let selectedDate = null; // 選択された日付 (YYYY-MM-DD形式)
+
+        // 全タスクデータを取得 (LI要素からデータ属性を読み込む)
+        const allTasksData = Array.from(allTasksList.children).map(li => {
+            return {
+                id: li.dataset.taskId,
+                content: li.dataset.taskContent,
+                dueDate: li.dataset.dueDate, // YYYY-MM-DD形式
+                isCompleted: li.dataset.isCompleted === 'true',
+                html: li.outerHTML // LI要素全体のHTMLを保存
+            };
+        });
+
+        function generateCalendar() {
+            calendarGrid.innerHTML = ''; // カレンダーをクリア
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+            const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDayOfMonth.getDate();
+            const firstDayOfWeek = firstDayOfMonth.getDay(); // 0:日, 1:月, ..., 6:土
+
+            currentMonthYear.textContent = `${currentYear}年${currentMonth + 1}月`;
+
+            // 前月の空白セル
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.classList.add('calendar-day', 'empty');
+                calendarGrid.appendChild(emptyDay);
+            }
+
+            // 今月の日付セル
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.classList.add('calendar-day');
+                dayElement.textContent = day;
+
+                const fullDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                // 今日かどうかをチェック
+                const today = new Date();
+                const todayFormatted = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                if (fullDate === todayFormatted) {
+                    dayElement.classList.add('today');
+                }
+
+                // その日にタスクがあるかチェック
+                const tasksForDay = allTasksData.filter(task => task.dueDate === fullDate && !task.isCompleted);
+                if (tasksForDay.length > 0) {
+                    dayElement.classList.add('has-tasks');
+                }
+
+                dayElement.dataset.date = fullDate; // YYYY-MM-DD形式でデータ属性に保存
+
+                dayElement.addEventListener('click', function() {
+                    // 以前選択されていた日付のスタイルをリセット
+                    const previouslySelected = document.querySelector('.calendar-day.selected');
+                    if (previouslySelected) {
+                        previouslySelected.classList.remove('selected');
+                    }
+                    // 新しく選択された日付にスタイルを適用
+                    dayElement.classList.add('selected');
+                    selectedDate = fullDate; // 選択された日付を更新
+                    displayTasksForSelectedDate(selectedDate);
+                });
+                calendarGrid.appendChild(dayElement);
+            }
+
+            // 初期表示で今日の日付を選択状態にする
+            if (!selectedDate) {
+                const todayElement = calendarGrid.querySelector('.calendar-day.today');
+                if (todayElement) {
+                    todayElement.click(); // クリックイベントをトリガーして選択状態にする
+                } else {
+                    // 今日の日付が現在の月にない場合（例: 月を移動した後）は、1日を選択状態にする
+                    const firstDayElement = calendarGrid.querySelector('.calendar-day:not(.empty)');
+                    if (firstDayElement) {
+                        firstDayElement.click();
+                    }
+                }
+            } else {
+                // 月を移動した後に以前選択していた日付を再選択しようとする
+                const elementToSelect = calendarGrid.querySelector(`[data-date="${selectedDate}"]`);
+                if (elementToSelect) {
+                    elementToSelect.classList.add('selected');
+                    displayTasksForSelectedDate(selectedDate); // 再度表示
+                } else {
+                    // 以前選択していた日付が現在の月にない場合は今日を選択
+                    const todayElement = calendarGrid.querySelector('.calendar-day.today');
+                    if (todayElement) {
+                        todayElement.click();
+                    } else {
+                        // 今日もない場合は1日を選択
+                        const firstDayElement = calendarGrid.querySelector('.calendar-day:not(.empty)');
+                        if (firstDayElement) {
+                            firstDayElement.click();
+                        }
+                    }
+                }
+            }
+        }
+
+        function displayTasksForSelectedDate(date) {
+            selectedDateHeader.textContent = `${new Date(date).getFullYear()}年${new Date(date).getMonth() + 1}月${new Date(date).getDate()}日のタスク`;
+            selectedDateTasksList.innerHTML = ''; // リストをクリア
+
+            const tasksToShow = allTasksData.filter(task => task.dueDate === date);
+
+            if (tasksToShow.length > 0) {
+                noTasksMessage.style.display = 'none';
+                // 完了済みタスクを最後にソート
+                tasksToShow.sort((a, b) => (a.isCompleted === b.isCompleted) ? 0 : a.isCompleted ? 1 : -1);
+
+                tasksToShow.forEach(task => {
+                    // LI要素のHTMLをそのまま挿入
+                    selectedDateTasksList.insertAdjacentHTML('beforeend', task.html);
+                });
+            } else {
+                noTasksMessage.style.display = 'block';
+            }
+        }
+
+        // 月移動ボタンのイベントリスナー
+        prevMonthBtn.addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            selectedDate = null; // 月移動で選択状態をリセット
+            generateCalendar();
+        });
+
+        nextMonthBtn.addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            selectedDate = null; // 月移動で選択状態をリセット
+            generateCalendar();
+        });
+
+        // 初期カレンダー生成と通知チェック
+        generateCalendar();
+        checkAndNotifyTasks();
+        // --- カレンダー機能のJavaScript 終わり ---
+      });
+    </script>
   </body>
 </html>
