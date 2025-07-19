@@ -41,17 +41,48 @@ body {
     transform: translateY(-2px);
 }
 
+/* Main Content Wrapper for messages and main-container */
+.main-content-wrapper {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 中央寄せ */
+}
+
+/* Global Alert Styles (for flash messages) */
+.main-content-wrapper .alert.main-alert,
+.main-content-wrapper .card.main-alert-card {
+    width: 100%;
+    max-width: 800px; /* メインコンテンツの幅に合わせる */
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 8px;
+}
+.main-content-wrapper .alert.alert-danger {
+    background-color: #f8d7da;
+    color: #dc3545;
+    border-color: #f5c6cb;
+}
+.main-content-wrapper .alert.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+
 /* Main Container for Split Layout */
 .main-container {
     display: flex;
     flex-grow: 1; /* 残りのスペースを埋める */
-    padding: 20px;
     gap: 20px; /* パネル間のスペース */
     max-width: 1400px; /* 最大幅を設定 */
-    margin: 20px auto; /* 中央寄せ */
+    width: 100%; /* 親のmain-content-wrapperの幅に合わせる */
+    margin: 0 auto; /* 中央寄せ */
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 20px; /* 内部パディング */
 }
 
 /* Left Panel: Task List & Form */
@@ -84,6 +115,12 @@ body {
     background-color: #fcfcfc;
 }
 
+/* NEW: フォームグループが常に全幅を占めるようにする */
+.task-add-section form .form-group {
+    width: 100%; /* 各フォームグループが全幅を占めるように設定 */
+    margin-bottom: 15px; /* 各フォームグループの下にスペース */
+}
+
 .task-add-section form label {
     font-weight: 600;
     color: #555;
@@ -93,19 +130,24 @@ body {
 
 form input[type="text"],
 form input[type="datetime-local"],
-form input[type="password"] {
+form input[type="password"],
+textarea.form-control, /* textareaも追加 */
+select.form-control /* selectも追加 */ {
     flex-grow: 1;
-    padding: 12px 15px;
+    padding: 16px 15px; /* 垂直パディングをさらに増やしました */
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    line-height: normal; /* 行の高さを標準に設定 */
 }
 
 form input[type="text"]:focus,
 form input[type="datetime-local"]:focus,
-form input[type="password"]:focus {
+form input[type="password"]:focus,
+textarea.form-control:focus,
+select.form-control:focus {
     border-color: #3498db;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
     outline: none;
@@ -141,7 +183,8 @@ form input[type="password"]:focus {
 .right-panel {
     flex: 1; /* 利用可能なスペースを均等に分割 */
     min-width: 350px; /* 最小幅 */
-    padding-left: 20px; /* 左側のパネルとの区切り */
+    padding-left: 20px; /* 右側のパネルとの区切り */
+    border-left: 1px solid #eee; /* 区切り線 */
     overflow-y: auto; /* 内容が多い場合にスクロール */
     max-height: calc(100vh - 100px); /* ヘッダー分を引いた高さ */
 }
@@ -322,7 +365,7 @@ ul li.todo-item {
     border-radius: 8px;
     display: flex;
     align-items: center; /* 垂直方向の中央揃え */
-    justify-content: flex-start; /* 左端に揃える */
+    gap: 15px; /* アイテム間のスペース */
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.3s ease;
 }
@@ -361,8 +404,6 @@ form.todo-action-form {
     margin: 0; /* フォームのデフォルトマージンをリセット */
     padding: 0; /* フォームのデフォルトパディングをリセット */
     flex-shrink: 0; /* 縮小させない */
-    /* width: 70px; */ /* ボタンの幅に合わせる */
-    /* text-align: center; */
 }
 
 /* 「完了」「戻す」ボタン自体 */
@@ -373,7 +414,12 @@ form.todo-action-form {
     width: 70px; /* 固定幅を設定 */
     text-align: center;
     box-sizing: border-box; /* パディングとボーダーをwidthに含める */
-    margin-right: 15px; /* タスク内容との間隔 */
+    
+    /* Flexboxを使ってボタン内のコンテンツを中央揃え */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: normal; /* Flexboxで中央揃えするため、行の高さをリセット */
 }
 
 .todo-action-button.complete-btn:hover {
@@ -394,7 +440,7 @@ form.todo-action-form {
 
 ul li .todo-content {
     flex-grow: 1; /* 残りのスペースを埋める */
-    margin: 0 1rem; /* 左右にマージン */
+    margin-right: auto; /* 左寄せにし、右側の要素を右に押しやる */
 }
 
 ul li .todo-content span {
@@ -471,7 +517,7 @@ ul li.overdue-task {
     text-align: center;
     box-sizing: border-box; /* パディングとボーダーをwidthに含める */
     
-    /* NEW: Flexboxを使ってボタン内のコンテンツを中央揃え */
+    /* Flexboxを使ってボタン内のコンテンツを中央揃え */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -493,8 +539,6 @@ ul li.overdue-task {
     background-color: #3498db; /* 青色 */
     color: white;
     text-decoration: none; /* aタグのデフォルト下線をなくす */
-    /* display: inline-block; は不要、.todo-action-button で display: flex になっているため */
-    /* line-height: 1; も不要、.todo-action-button で line-height: normal になっているため */
 }
 
 .todo-action-button.edit-btn:hover {
@@ -509,7 +553,6 @@ ul li.overdue-task {
     align-items: flex-end; /* 子要素をこのコンテナの右端に揃える */
     gap: 5px; /* ボタン間の垂直方向のスペース */
     flex-shrink: 0; /* 縮小させない */
-    margin-left: auto; /* NEW: 残りのスペースを左に押しやり、自身を右に寄せる */
 }
 
 /* 削除ボタンのフォームラッパー */
@@ -570,16 +613,37 @@ ul li.overdue-task {
 }
 
 /* エラーメッセージのスタイルを調整 */
-.auth-card .alert.alert-danger {
+.auth-card .alert.alert-danger,
+.main-content-wrapper .alert.alert-danger { /* main-content-wrapper のアラートも調整 */
     margin-top: -15px; /* タイトルとのスペースを調整 */
     margin-bottom: 25px; /* フォームとのスペース */
     padding: 12px;
     font-size: 0.9rem;
     border-radius: 8px;
-    background-color: #f8d7da; /* Bootstrapのデフォルト背景色 */
-    color: #dc3545; /* 明るい赤色に変更 */
-    border-color: #f5c6cb; /* ボーダー色も調整 */
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.1); /* エラーカラーに基づいた影 */
+    background-color: #f8d7da;
+    color: #dc3545;
+    border-color: #f5c6cb;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* 成功メッセージのスタイル */
+.main-content-wrapper .alert.alert-success {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 12px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 
@@ -673,6 +737,228 @@ ul li.overdue-task {
     text-decoration: underline;
 }
 
+/* --- Tag Specific Styles --- */
+.tag-select-group label {
+    margin-bottom: 5px;
+}
+
+/* NEW: フォームグループが常に全幅を占めるようにする */
+.task-add-section form .form-group {
+    width: 100%; /* 各フォームグループが全幅を占めるように設定 */
+    margin-bottom: 15px; /* 各フォームグループの下にスペース */
+}
+
+/* NEW: 利用可能なタグのコンテナ */
+.available-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; /* タグ間のスペース */
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fcfcfc;
+    min-height: 40px; /* 少なくとも1行分の高さを確保 */
+    align-content: flex-start; /* 上から詰めて表示 */
+}
+
+/* NEW: 利用可能な個々のタグ */
+.available-tag-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: 1px solid transparent; /* デフォルトのボーダー */
+}
+
+.available-tag-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    opacity: 0.9;
+}
+
+/* NEW: 選択された利用可能なタグのスタイル */
+.available-tag-item.selected {
+    border: 2px solid #3498db; /* 選択されたことを示す青いボーダー */
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+
+/* NEW: 選択されたタグのコンテナ */
+.selected-tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fcfcfc;
+    min-height: 40px; /* 少なくとも1行分の高さを確保 */
+    align-content: flex-start; /* 上から詰めて表示 */
+}
+
+/* 選択された個々のタグ (既存のスタイルを維持) */
+.selected-tag-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    /* color and background-color are set by JS for contrast */
+    white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.selected-tag-item .remove-tag-btn {
+    background: none;
+    border: none;
+    color: inherit; /* 親要素の色を継承 */
+    font-size: 1em;
+    margin-left: 8px;
+    padding: 0;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.selected-tag-item .remove-tag-btn:hover {
+    opacity: 1;
+}
+
+/* タグの表示形式をバッジに戻す */
+.task-tags-display {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px; /* タグ間のスペース */
+}
+
+.tag-badge {
+    display: inline-block; /* 以前のinline-blockに戻す */
+    padding: 4px 8px;
+    border-radius: 5px;
+    color: white; /* 変更: 文字色を白に */
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2); /* 変更: 文字に影をつけて見やすく */
+    white-space: nowrap; /* タグ名が改行されないように */
+    /* background-color はEJSで動的に設定される */
+    border: none; /* 以前のボーダーを削除 */
+}
+
+/* 箇条書きの点を削除 (念のためdisplay:noneを維持) */
+.tag-badge .tag-bullet {
+    display: none;
+}
+
+
+/* タグフィルターセクション */
+.tag-filter-section {
+    background-color: #fcfcfc;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.tag-filter-section p {
+    margin: 0;
+    font-weight: 600;
+    color: #555;
+}
+
+.tag-filter-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 5px;
+    background-color: #e9ecef; /* デフォルトの背景色 */
+    color: #495057; /* デフォルトの文字色 */
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent; /* デフォルトのボーダー */
+}
+
+.tag-filter-btn:hover {
+    background-color: #dee2e6;
+    color: #212529;
+    text-decoration: none;
+}
+
+.tag-filter-btn.active {
+    border: 2px solid #3498db; /* アクティブなフィルターの強調 */
+    font-weight: 700;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* タグ管理ページのスタイル */
+.tags-manage-container {
+    max-width: 800px; /* 管理ページの最大幅 */
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+}
+
+.tags-manage-container .card-header {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.tag-add-form {
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* カラーピッカーの幅を調整 */
+.tag-add-form .form-control-color {
+    height: calc(1.5em + 0.75rem + 2px); /* Bootstrapの標準入力フィールドの高さに合わせる */
+    padding: 0.375rem;
+    width: 120px; /* 変更: 幅を固定して見やすく */
+    min-width: 120px; /* 最小幅も設定 */
+}
+
+.tag-item {
+    padding: 10px 15px;
+    border-left: 5px solid #3498db;
+    margin-bottom: 8px;
+    border-radius: 5px;
+}
+
+.tag-item .tag-info {
+    display: flex;
+    align-items: center;
+}
+
+.tag-item .tag-badge {
+    margin-right: 10px;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+}
+
+.tag-item .tag-actions {
+    display: flex;
+    gap: 5px;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 992px) { /* 左右分割を解除するブレークポイント */
@@ -708,6 +994,7 @@ ul li.overdue-task {
     ul li.todo-item {
         flex-direction: column;
         align-items: flex-start;
+        padding: 15px; /* パディングを調整 */
     }
 
     ul li .todo-action-form {
@@ -743,6 +1030,31 @@ ul li.overdue-task {
     .auth-submit-btn, .auth-cancel-btn {
         padding: 12px 20px;
         font-size: 1rem;
+    }
+
+    /* タグ管理ページのレスポンシブ調整 */
+    .tags-manage-container {
+        padding: 20px;
+    }
+    .tag-add-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .tag-add-form .form-group {
+        margin-right: 0 !important;
+        width: 100%;
+    }
+    .tag-add-form button {
+        width: 100%;
+    }
+    .tag-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .tag-item .tag-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 10px;
     }
 }
 

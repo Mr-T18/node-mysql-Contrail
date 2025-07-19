@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+            xintegrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <%- include('./header'); %>
+
+    <div class="main-content-wrapper">
+        <div class="container tags-manage-container">
+            <h2 class="auth-title">タグ管理</h2>
+            <!-- エラー/成功メッセージ表示 -->
+            <%- include('./error_messages'); %>
+
+            <!-- タグ追加フォーム -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    新しいタグを追加
+                </div>
+                <div class="card-body">
+                    <form action="/tags" method="post" class="form-inline tag-add-form">
+                        <div class="form-group mr-3 mb-2">
+                            <label for="tagName" class="sr-only">タグ名</label>
+                            <input type="text" class="form-control" id="tagName" name="tagName" placeholder="タグ名" required>
+                        </div>
+                        <div class="form-group mr-3 mb-2">
+                            <label for="tagColor" class="sr-only">色</label>
+                            <input type="color" class="form-control form-control-color" id="tagColor" name="tagColor" value="#6c757d">
+                        </div>
+                        <button type="submit" class="btn btn-primary mb-2">追加</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 既存タグ一覧 -->
+            <div class="card">
+                <div class="card-header">
+                    既存のタグ
+                </div>
+                <div class="card-body">
+                    <% if (tags.length > 0) { %>
+                        <ul class="list-group">
+                            <% tags.forEach(tag => { %>
+                                <li class="list-group-item d-flex justify-content-between align-items-center tag-item">
+                                    <div class="tag-info">
+                                        <span class="tag-badge" style="background-color: <%= tag.color %>;">
+                                            <%= tag.name %>
+                                        </span>
+                                    </div>
+                                    <div class="tag-actions">
+                                        <a href="/tags/edit/<%= tag.id %>" class="btn btn-info btn-sm mr-2">編集</a>
+                                        <form action="/tags/delete/<%= tag.id %>" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('本当にこのタグを削除しますか？関連するタスクからタグが削除されます。');">削除</button>
+                                        </form>
+                                    </div>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <p class="text-muted">まだタグがありません。上記フォームから追加してください。</p>
+                    <% } %>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <a href="/" class="btn btn-secondary">タスク一覧に戻る</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            xintegrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+            xintegrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            xintegrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
+</body>
+</html>
