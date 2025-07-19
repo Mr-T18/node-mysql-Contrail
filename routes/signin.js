@@ -1,20 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const passport = require("passport");
-const flash = require('connect-flash');
+const passport = require('passport'); // Passport.jsをインポート
 
-router.get('/', function (req, res, next) {
-  const isAuth = req.isAuthenticated();
-  res.render("signin", {
-    title: "Sign in",
-    isAuth: isAuth,
+// GET /signin (サインインフォームの表示)
+router.get('/', function(req, res, next) {
+  res.render('signin', {
+    title: 'サインイン',
+    errorMessage: req.flash('error'), // flashメッセージを取得
+    isAuth: req.isAuthenticated() // NEW: isAuth をテンプレートに渡す
   });
 });
 
-router.post('/', passport.authenticate("local", {
-  successRedirect: "/",
-  failureRedirect: "/signin",
-  // failureFlash: true, // <- これなんか動かないんすよね（笑）
+// POST /signin (サインイン処理)
+router.post('/', passport.authenticate('local', {
+  successRedirect: '/', // 認証成功時にリダイレクトするパス
+  failureRedirect: '/signin', // 認証失敗時にリダイレクトするパス
+  failureFlash: true // flashメッセージを有効にする
 }));
 
 module.exports = router;

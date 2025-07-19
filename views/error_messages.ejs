@@ -1,13 +1,34 @@
-<% if (typeof errorMessage === 'undefined') { var errorMessage = []; } %>
-<% if(errorMessage.length != 0){ %>
-  <div>
-    <strong>Warning!</strong> The form contains <%= errorMessage.length %> errors.
+<% if (typeof errorMessage !== 'undefined' && errorMessage && errorMessage.length > 0) { %>
+  <div class="alert alert-danger main-alert" role="alert">
+    <% errorMessage.forEach(msg => { %>
+      <%= msg %><br>
+    <% }); %>
   </div>
-  <div>
-    <ul>
-      <% for(let item of errorMessage){ %>
-        <li><%= item %></li>
-      <% } %>
-    </ul>
+<% } %>
+
+<% if (typeof successMessage !== 'undefined' && successMessage && successMessage.length > 0) { %>
+  <div class="alert alert-success main-alert" role="alert">
+    <% successMessage.forEach(msg => { %>
+      <%= msg %><br>
+    <% }); %>
+  </div>
+<% } %>
+
+<% if (typeof message !== 'undefined' && message && typeof errorMessage === 'undefined') { %>
+  <!-- app.jsのエラーハンドラから直接渡された汎用メッセージ (errorMessageが空の場合のみ表示) -->
+  <div class="alert alert-danger main-alert" role="alert">
+    <%= message %>
+  </div>
+<% } %>
+
+<% if (typeof error !== 'undefined' && error && error.stack) { %>
+  <!-- 開発環境でのスタックトレース -->
+  <div class="card mt-4 text-left main-alert-card">
+    <div class="card-header bg-danger text-white">
+      <strong>エラー詳細 (開発環境のみ表示)</strong>
+    </div>
+    <div class="card-body">
+      <pre class="text-danger"><%= error.stack %></pre>
+    </div>
   </div>
 <% } %>
